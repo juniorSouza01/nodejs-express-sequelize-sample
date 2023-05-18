@@ -63,9 +63,18 @@ mysql --host=localhost --user=root --password=root --port 3306 --protocol=tcp -e
 ```
 
 - Use sequelize to create a model/table
-- Add basic CRUD routes for your model. POST(create), GET(read), PUT(update) and DELETE.
+- Add basic CRUD routes to your model. POST(create), GET(read), PUT(update) and DELETE.
 - Add unit tests to your all your routes to get a good code coverage.
 
 ### 3º Milestone - Advanced Sequelize
 
+- Create some 1:N relation to your model.
+- Create basic CRUD routes to the "child" model of your main model.
+- Add unit tests to your all your routes to get a good code coverage.
+
 ### 4º Milestone - Going Further
+
+- Create some N:N relation to your model.
+- Add basic CRUD routes to your new model. POST(create), GET(read), PUT(update) and DELETE.
+- Add routes to Create, Read and Delete relations between these two models.
+- Add unit tests to your all your routes to get a good code coverage.
