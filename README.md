@@ -34,7 +34,14 @@ Remember to always use `async/await` when interacting to Sequelize, so be sure t
 
 ### MochaJS/Chai/Istanbul
 
-a
+MochaJS is a JavaScript test framework.
+You can find more about it on their [website](https://mochajs.org/).
+
+According to their [website](https://www.chaijs.com/) "Chai is a BDD / TDD assertion library for node and the browser that can be delightfully paired with any javascript testing framework."
+
+"Istanbul instruments your ES5 and ES2015+ JavaScript code with line counters, so that you can track how well your unit-tests exercise your codebase".
+To run Istanbul, you can you the command line `nyc` which integrates well with MochaJS.
+You can find more about it on their [website](https://istanbul.js.org/).
 
 ## About Challenge 🎯
 
