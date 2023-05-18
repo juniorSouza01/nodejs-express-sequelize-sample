@@ -1,6 +1,6 @@
 # nodejs-express-sequelize-sample
 
-The main reason of this project study is for you to learn, by yourself, how to work with the `express` and `sequelize` tools.
+The main reason of this project study is for you to learn, by yourself, how to work with the `express`, `sequelize` and unit test tools.
 
 Fork this repository and create a NodeJS API using express as your webserver and sequelize as your database manager.
 
