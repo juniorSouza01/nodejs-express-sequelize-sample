@@ -3,7 +3,7 @@ const expect = chai.expect;
 const supertest = require('supertest');
 
 // import your app here
-const app = require('../.');
+const app = require('../src/routes');
 
 const agent = supertest.agent(app);
 

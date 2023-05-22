@@ -1,6 +1,8 @@
 {
   "exclude": [
-    "tests/"
+    "tests/",
+    "coverage/",
+    "index.js"
   ],
   "all": true
 }
