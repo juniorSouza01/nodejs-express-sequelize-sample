@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 
 app.get('/hello-world', (req, res) => {
-   const name = req.query['name'] || `World!`;
+    const name = req.query.name || `World!`;
     res.json({ message: `Hello ${name}!` });
 });
 
