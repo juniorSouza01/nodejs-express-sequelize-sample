@@ -2,12 +2,8 @@ const express = require('express');
 const app = express();
 
 app.get('/hello-world', (req, res) => {
-   let name = req.query['name'];
-   if(name) {
+   const name = req.query['name'] || `World!`;
     res.json({ message: `Hello ${name}!` });
-   } else {
-    res.json({ message: 'Hello World' });
-   }
 });
 
 app.get('/hello-world/:name', (req, res) => {
