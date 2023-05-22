@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 
 app.get('/hello-world', (req, res) => {
-    let name = req.query['name'];
+    let name = req.query('name');
     if(name) {
      res.json({ message: `Hello ${name}!` });
     } else {
