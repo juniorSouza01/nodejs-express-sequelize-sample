@@ -1,9 +1,28 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../models");
+const app = express();
+
+const bodyParser = require('body-parser');
+
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+app.use(bodyParser.json());
+
+app.get('/hello-world', (req, res) => {
+  const name = req.query.name || `world`;
+  res.send(`Hello ${name}!` );
+});
+
+app.get('/hello-world/:name', (req, res) => {
+  const name = req.params.name;
+  res.send(`Hello ${name}!` );
+
+});
 
 // buscar todos os itens
-router.get("/all", async (req, res) => {
+app.get("/all", async (req, res) => {
   try {
     const itens = await db.Item.findAll();
     res.send(itens);
@@ -13,7 +32,7 @@ router.get("/all", async (req, res) => {
 });
 
 // buscar um item em específico
-router.get("/item/:id", async (req, res) => {
+app.get("/item/:id", async (req, res) => {
   const itemId = req.params.id;
 
   try {
@@ -29,7 +48,7 @@ router.get("/item/:id", async (req, res) => {
 });
 
 // novo item
-router.post("/new", async (req, res) => {
+app.post("/new", async (req, res) => {
   const newItem = {
     name: req.body.name,
     description: req.body.description
@@ -44,7 +63,7 @@ router.post("/new", async (req, res) => {
 });
 
 // deletar item
-router.delete("/item/:id", async (req, res) => {
+app.delete("/item/:id", async (req, res) => {
   const itemId = req.params.id;
 
   try {
@@ -65,7 +84,7 @@ router.delete("/item/:id", async (req, res) => {
 });
 
 // editar item
-router.put("/item/:id", async (req, res) => {
+app.put("/item/:id", async (req, res) => {
   const itemId = req.params.id;
 
   const updatedItem = {
@@ -88,4 +107,4 @@ router.put("/item/:id", async (req, res) => {
   }
 });
 
-module.exports = router;
+module.exports = app;

@@ -18,8 +18,8 @@ describe('User API Test', () => {
         // run N times before each test
     });
 
-    it('test route', async () => {
-        const res = await agent.get('/api/all');
+    it('test hello-world route', async () => {
+        const res = await agent.get('/hello-world');
         expect(res.statusCode).to.be.equals(200);
         expect(res.text).to.be.equals('Hello world!');
     });
