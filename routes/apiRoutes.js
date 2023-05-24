@@ -3,77 +3,89 @@ const router = express.Router();
 const db = require("../models");
 
 // buscar todos os itens
-router.get("/all", (req, res) => {
-  db.Item.findAll().then(itens => res.send(itens));
+router.get("/all", async (req, res) => {
+  try {
+    const itens = await db.Item.findAll();
+    res.send(itens);
+  } catch (error) {
+    res.status(500).send({ error: "Falha ao buscar itens." });
+  }
 });
 
 // buscar um item em específico
-router.get("/item/:id", (req, res) => {
-    const itemId = req.params.id;
-  
-    db.Item.findByPk(itemId)
-      .then(item => {
-        if (item) {
-          res.send(item);
-        } else {
-          res.status(404).send({ error: "Item não encontrado." });
-        }
-      })
-      .catch(error => res.status(500).send({ error: "Falha ao encontrar item." }));
-  });~
+router.get("/item/:id", async (req, res) => {
+  const itemId = req.params.id;
+
+  try {
+    const item = await db.Item.findByPk(itemId);
+    if (item) {
+      res.send(item);
+    } else {
+      res.status(404).send({ error: "Item não encontrado." });
+    }
+  } catch (error) {
+    res.status(500).send({ error: "Falha ao encontrar item." });
+  }
+});
 
 // novo item
-router.post("/new", (req, res) => {
-    const newItem = {
-      name: req.body.name,
-      description: req.body.description
-    };
-  
-    db.Item.create(newItem)
-      .then(submittedItem => res.send(submittedItem))
-      .catch(error => res.status(500).send({ error: "Falha ao criar item." }));
-  });
+router.post("/new", async (req, res) => {
+  const newItem = {
+    name: req.body.name,
+    description: req.body.description
+  };
 
+  try {
+    const submittedItem = await db.Item.create(newItem);
+    res.send(submittedItem);
+  } catch (error) {
+    res.status(500).send({ error: "Falha ao criar item." });
+  }
+});
 
 // deletar item
-router.delete("/item/:id", (req, res) => {
-    const itemId = req.params.id;
-  
-    db.Item.destroy({
+router.delete("/item/:id", async (req, res) => {
+  const itemId = req.params.id;
+
+  try {
+    const deletedCount = await db.Item.destroy({
       where: {
         id: itemId
       }
-    })
-      .then(deletedCount => {
-        if (deletedCount === 0) {
-          res.status(404).send({ error: "Item não encontrado." });
-        } else {
-          res.send({ message: "Item deletado com sucesso." });
-        }
-      })
-      .catch(error => res.status(500).send({ error: "Falha ao deletar item." }));
-  });
+    });
+
+    if (deletedCount === 0) {
+      res.status(404).send({ error: "Item não encontrado." });
+    } else {
+      res.send({ message: "Item deletado com sucesso." });
+    }
+  } catch (error) {
+    res.status(500).send({ error: "Falha ao deletar item." });
+  }
+});
 
 // editar item
-router.put("/item/:id", (req, res) => {
-    const itemId = req.params.id;
-  
-    const updatedItem = {
-      name: req.body.name,
-      description: req.body.description
-    };
-  
-    db.Item.update(updatedItem, {
+router.put("/item/:id", async (req, res) => {
+  const itemId = req.params.id;
+
+  const updatedItem = {
+    name: req.body.name,
+    description: req.body.description
+  };
+
+  try {
+    const [updatedCount] = await db.Item.update(updatedItem, {
       where: { id: itemId }
-    })
-      .then(updatedCount => {
-        if (updatedCount[0] === 0) {
-          res.status(404).send({ error: "Item não encontrado." });
-        } else {
-          res.send({ message: "Item atualizado com sucesso." });
-        }
-      })
-      .catch(error => res.status(500).send({ error: "Falha ao atualizar item." }));
-  });
+    });
+
+    if (updatedCount === 0) {
+      res.status(404).send({ error: "Item não encontrado." });
+    } else {
+      res.send({ message: "Item atualizado com sucesso." });
+    }
+  } catch (error) {
+    res.status(500).send({ error: "Falha ao atualizar item." });
+  }
+});
 
 module.exports = router;

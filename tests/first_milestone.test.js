@@ -3,7 +3,7 @@ const expect = chai.expect;
 const supertest = require('supertest');
 
 // import your app here
-const app = require('../src/routes');
+const app = require('../routes/apiRoutes');
 
 const agent = supertest.agent(app);
 
@@ -18,8 +18,8 @@ describe('User API Test', () => {
         // run N times before each test
     });
 
-    it('test hello-world route', async () => {
-        const res = await agent.get('/hello-world');
+    it('test route', async () => {
+        const res = await agent.get('/api/all');
         expect(res.statusCode).to.be.equals(200);
         expect(res.text).to.be.equals('Hello world!');
     });

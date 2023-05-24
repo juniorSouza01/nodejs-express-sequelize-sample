@@ -12,8 +12,15 @@ app.use(bodyParser.json());
 const apiRoutes = require("./routes/apiRoutes");
 app.use("/api", apiRoutes);
 
-db.sequelize.sync().then(() => {
-  app.listen(PORT, () => {
-    console.log(`listening on: http://localhost:${PORT}`);
-  });
-});
+const startServer = async () => {
+  try {
+    await db.sequelize.sync();
+    app.listen(PORT, () => {
+      console.log(`listening on: http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error("Error starting server:", error);
+  }
+};
+
+startServer();
