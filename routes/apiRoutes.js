@@ -22,7 +22,7 @@ app.get('/hello-world/:name', (req, res) => {
 });
 
 // buscar todos os itens
-app.get("/all", async (req, res) => {
+app.get("/item", async (req, res) => {
   try {
     const itens = await db.Item.findAll();
     res.send(itens);
@@ -48,7 +48,7 @@ app.get("/item/:id", async (req, res) => {
 });
 
 // novo item
-app.post("/new", async (req, res) => {
+app.post("/item", async (req, res) => {
   const newItem = {
     name: req.body.name,
     description: req.body.description
