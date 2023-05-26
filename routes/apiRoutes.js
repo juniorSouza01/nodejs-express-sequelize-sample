@@ -24,7 +24,13 @@ app.get('/hello-world/:name', (req, res) => {
 // buscar todos os itens
 app.get("/item", async (req, res) => {
   try {
-    const itens = await db.Item.findAll();
+    const itens = await db.Item.findAll({
+      where: {
+        quality: {
+          gt: 5
+        }
+      }
+    });
     res.send(itens);
   } catch (error) {
     res.status(500).send({ error: "Falha ao buscar itens." });
