@@ -25,7 +25,8 @@ describe('User API Test', async () => {
     it('should create a new item on POST route /new', async () => {
         const newItem = {
             name: 'Item teste',
-            description: 'Novo Item.'
+            description: 'Novo Item.',
+            value: 10
         };
         let res = await agent.post('/item').send(newItem);
         expect(res.statusCode).to.be.equal(200);
@@ -33,6 +34,7 @@ describe('User API Test', async () => {
         expect(res.body).to.have.property('id');
         expect(res.body.name).to.be.equal(newItem.name);
         expect(res.body.description).to.be.equal(newItem.description);
+        expect(res.body.value).to.be.equal(newItem.value);
         createdItemId = res.body.id;
     
         res = await agent.get('/item');
@@ -42,12 +44,14 @@ describe('User API Test', async () => {
         expect(res.body[0].id).to.be.equal(createdItemId);
         expect(res.body[0].name).to.be.equal('Item teste');
         expect(res.body[0].description).to.be.equal('Novo Item.');
+        expect(res.body[0].value).to.be.equal(10);
     });
 
     it('should update an item on PUT route /item/:id', async () => {
         const newItem = {
             name: 'Item teste',
-            description: 'Novo Item.'
+            description: 'Novo Item.',
+            value: 10
         };
         let res = await agent.post('/item').send(newItem);
         expect(res.statusCode).to.be.equal(200);
@@ -55,11 +59,13 @@ describe('User API Test', async () => {
         expect(res.body).to.have.property('id');
         expect(res.body.name).to.be.equal(newItem.name);
         expect(res.body.description).to.be.equal(newItem.description);
+        expect(res.body.value).to.be.equal(newItem.value);
         createdItemId = res.body.id;
     
         const updatedItem = {
             name: 'Novo nome',
-            description: 'Nova descrição'
+            description: 'Nova descrição',
+            value: 10
         };
     
         res = await agent.put(`/item/${createdItemId}`).send(updatedItem);
@@ -73,7 +79,8 @@ describe('User API Test', async () => {
     it('should delete an item on DELETE route /item/:id', async () => {
         const newItem = {
           name: 'Item teste',
-          description: 'Novo Item.'
+          description: 'Novo Item.',
+          value: 10
         };
         const createRes = await agent.post('/item').send(newItem);
         expect(createRes.statusCode).to.be.equal(200);

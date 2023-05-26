@@ -51,7 +51,8 @@ app.get("/item/:id", async (req, res) => {
 app.post("/item", async (req, res) => {
   const newItem = {
     name: req.body.name,
-    description: req.body.description
+    description: req.body.description,
+    quality: req.body.quality
   };
 
   try {
@@ -89,7 +90,8 @@ app.put("/item/:id", async (req, res) => {
 
   const updatedItem = {
     name: req.body.name,
-    description: req.body.description
+    description: req.body.description,
+    quality: req.body.quality
   };
 
   try {

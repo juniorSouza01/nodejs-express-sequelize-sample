@@ -7,6 +7,10 @@ module.exports = (sequelize, DataTypes) => {
         description: {
             type: DataTypes.STRING,
             allowNull: false
+        },
+        quality: {
+            type: DataTypes.INTEGER,
+            allowNull: false
         }
     });
     return Item;
