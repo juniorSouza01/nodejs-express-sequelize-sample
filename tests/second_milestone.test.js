@@ -45,6 +45,12 @@ describe('User API Test', async () => {
         expect(getResponse.body.quality).to.be.equal(newItem.quality);
         expect(deleteRes.statusCode).to.equal(200);
     });
+
+    it('validates 404 error for GET/:id route', async () => {
+        const res = await agent.get('/item/-1');
+        expect(res.statusCode).to.be.equal(404);
+        expect(res.body).to.be.an('object');
+    });
     
     it('should create a new item on POST route /new', async () => {
         const newItem = {
@@ -98,6 +104,17 @@ describe('User API Test', async () => {
         expect(res.body).to.be.an('object');
         expect(res.body).to.have.property('message');
         expect(res.body.message).to.be.equal('Item atualizado com sucesso.');
+    });
+
+    it('validates 404 error for GET/:id route', async () => {
+        const updatedItem = {
+            name: 'Novo nome',
+            description: 'Nova descrição',
+            quality: 10
+        };
+        res = await agent.put(`/item/-1`).send(updatedItem);
+        expect(res.statusCode).to.be.equal(404);
+        expect(res.body).to.be.an('object');
     });
 
     it('should delete an item on DELETE route /item/:id', async () => {
