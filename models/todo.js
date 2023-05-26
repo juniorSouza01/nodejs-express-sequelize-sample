@@ -13,5 +13,16 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         }
     });
-    return Item;
+
+    const Category = sequelize.define("Category", {
+        categoryName: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+    });
+    
+    return {
+        Item,
+        Category
+    };
 };
