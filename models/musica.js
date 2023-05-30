@@ -12,10 +12,11 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false
       }
-    },{
-        associate:function (models){
-             Musica.belongsTo(models.Artista);
-        }
     });
+  
+    Musica.associate = function (models) {
+      Musica.belongsTo(models.Artista, { foreignKey: 'artistaId' });
+    };
+  
     return Musica;
   };
