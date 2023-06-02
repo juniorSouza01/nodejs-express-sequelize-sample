@@ -49,7 +49,7 @@ app.get("/artista", async (req, res) => {
 app.get("/artista/:id", async (req, res) => {
   const artistaId = req.params.id;
   try {
-    const artista = await db.Artista.findByPk(artistaId);
+    const artista = await db.Artista.findByPk(artistaId, {include: db.Musica});
     if (artista) {
       res.status(200).json(artista);
     } else {

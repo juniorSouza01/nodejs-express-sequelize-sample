@@ -51,7 +51,7 @@ describe('User API Test', () => {
     it('Teste rota GET /artista Caso não haver o que consultar', async () => {
         const getResponse = await agent.get('/artista');
         expect(getResponse.statusCode).to.equal(200);
-        //validar se a lista está vazia
+        expect(getResponse.body).to.have.lengthOf(0);
     });
     
     it('Teste rota GET /artista/:id - StatusCode 200', async () => {
@@ -175,12 +175,10 @@ describe('User API Test', () => {
         const createMusicaResponse = await agent.post(`/artista/${createdArtistaId}/musica`).send(newMusica);
         expect(createMusicaResponse.statusCode).to.equal(200);
         const createdMusicaId = createMusicaResponse.body.id;
-
-        //lenghtOf(1) - validar se a lista tem o tamanha de 1
       
         const getResponse = await agent.get('/musicas');
         expect(getResponse.statusCode).to.equal(200);
-      
+        expect(getResponse.body).to.have.lengthOf(1);
         expect(getResponse.body[0].name).to.equal('Por um gole a mais');
         expect(getResponse.body[0].description).to.equal('buteco');
         expect(getResponse.body[0].quality).to.equal(10);
@@ -391,21 +389,33 @@ describe('User API Test', () => {
     
     it('Teste rota delete /musica/:id', async () => {
         const newArtista = {
-          artista: 'Teste 3° Milestone',
+          artista: 'Jovem Dex',
         };
         
         const createArtistaResponse = await agent.post('/artista').send(newArtista);
         const createdArtistaId = createArtistaResponse.body.id;
+
+        const getRespon = await agent.get(`/artista/${createdArtistaId}`);
+        expect(getRespon.statusCode).to.equal(200);
+        expect(getRespon.body.artista).to.be.equal("Jovem Dex");
         
         const newMusica = {
-          name: 'Nome da música',
-          description: 'Descrição da música',
+          name: 'submarino',
+          description: 'hit',
           quality: 10,
           artistaId: createdArtistaId
         };
         
         const createMusicaResponse = await agent.post(`/artista/${createdArtistaId}/musica`).send(newMusica);
         const createdMusicaId = createMusicaResponse.body.id;
+
+        const getResponse = await agent.get(`/musica/${createdMusicaId}`);
+        expect(getResponse.statusCode).to.equal(200);
+
+        expect(getResponse.body.name).to.be.equal('submarino');
+        expect(getResponse.body.description).to.be.equal('hit');
+        expect(getResponse.body.quality).to.be.equal(10);
+        expect(getResponse.body).to.have.property('artistaId', newMusica.artistaId);
         
         const deleteResponse = await agent.delete(`/musica/${createdMusicaId}`);
         expect(deleteResponse.status).to.equal(200);
