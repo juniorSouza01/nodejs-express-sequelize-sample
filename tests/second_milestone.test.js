@@ -280,16 +280,20 @@ describe('User API Test', () => {
 
     it('Teste rota put /musica/:id', async () => {
             const newArtista = {
-                artista: 'Teste 3° Milestone',
+                artista: 'Senna',
             };
         
             const createArtistaResponse = await agent.post('/artista').send(newArtista);
             expect(createArtistaResponse.statusCode).to.equal(200);
             const createdArtistaId = createArtistaResponse.body.id;
+
+            const getRespon = await agent.get(`/artista/${createdArtistaId}`);
+            expect(getRespon.statusCode).to.equal(200);
+            expect(getRespon.body.artista).to.be.equal("Senna");
         
             const newMusica = {
-                name: 'Nome da música',
-                description: 'Descrição da música',
+                name: 'For elisa',
+                description: 'calma',
                 quality: 10,
                 artistaId: createdArtistaId
             };
@@ -297,12 +301,18 @@ describe('User API Test', () => {
             const createMusicaResponse = await agent.post(`/artista/${createdArtistaId}/musica`).send(newMusica);
             const createdMusicaId = createMusicaResponse.body.id;
             expect(createMusicaResponse.statusCode).to.equal(200);
+
+            const getRespons = await agent.get(`/artista/${createdArtistaId}/musicas`);
+            expect(getRespons.statusCode).to.equal(200);
         
-            expect(createdMusicaId).not.be.null;
+            expect(getRespons.body[0].name).to.be.equal('For elisa');
+            expect(getRespons.body[0].description).to.be.equal('calma');
+            expect(getRespons.body[0].quality).to.be.equal(10);
+            expect(getRespons.body[0]).to.have.property('artistaId', newMusica.artistaId);
         
             const novaMusica = {
-                name: 'Música atualizada2',
-                description: 'Descrição da música atualizada',
+                name: 'Poeira da estrada',
+                description: 'buteco',
                 quality: 10,
                 artistaId: createdArtistaId
             };
@@ -311,12 +321,11 @@ describe('User API Test', () => {
         
             const getResponse = await agent.get(`/musica/${createdMusicaId}`);
             expect(getResponse.statusCode).to.equal(200);
-        
-            expect(updateResponse.body).to.be.an('object');
-            expect(getResponse.body).to.be.an('object');
-            expect(getResponse.body).to.have.property('name', novaMusica.name);
-            expect(getResponse.body).to.have.property('description', novaMusica.description);
-            expect(getResponse.body).to.have.property('quality', novaMusica.quality);
+            
+            expect(getResponse.body.name).to.be.equal('Poeira da estrada');
+            expect(getResponse.body.description).to.be.equal('buteco');
+            expect(getResponse.body.quality).to.be.equal(10);
+            expect(getResponse.body).to.have.property('artistaId', newMusica.artistaId);
         
             const deleteResponse = await agent.delete(`/musica/${createdMusicaId}`);
             expect(deleteResponse.statusCode).to.equal(200);
