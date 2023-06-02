@@ -321,7 +321,7 @@ describe('User API Test', () => {
         
             const getResponse = await agent.get(`/musica/${createdMusicaId}`);
             expect(getResponse.statusCode).to.equal(200);
-            
+
             expect(getResponse.body.name).to.be.equal('Poeira da estrada');
             expect(getResponse.body.description).to.be.equal('buteco');
             expect(getResponse.body.quality).to.be.equal(10);
@@ -335,85 +335,90 @@ describe('User API Test', () => {
     });
     
     it('Teste rota put /musica/:id' , async () => {
-            const NovaMusica = {
-                name: 'Música atualizada2',
-                description: 'Descrição da música atualizada',
-                quality: 10,
-                artistaId: 1
-            };
-            const updateResponse = await agent.put(`/musica/-1`).send(NovaMusica);
-            expect(updateResponse.statusCode).to.equal(404);
-            expect(updateResponse.body).to.be.an('object');
+        const updateResponse = await agent.put(`/musica/-1`).send();
+        expect(updateResponse.statusCode).to.equal(404);
+        expect(updateResponse.body).to.have.property('error', 'Música não encontrada.');
     });
     
     it("deve retornar um erro 404 se o artista não existir", async () => {
-            const newArtista = {
-                artista: 'Teste 3° Milestone',
-            };
-        
-            const createResponse = await agent.post('/artista').send(newArtista);
-            expect(createResponse.statusCode).to.equal(200);
-            const createdArtistaId = createResponse.body.id;
+        const newArtista = {
+            artista: 'Kay Black',
+        };
     
-            const newMusica = {
-                name: 'Nome da música',
-                description: 'Descrição da música',
-                quality: 10,
-                artistaId: createdArtistaId
-            };
-        
-            const createMusicaResponse = await agent.post(`/artista/${createdArtistaId}/musica`).send(newMusica);
-            expect(createMusicaResponse.statusCode).to.equal(200);
-            const createdMusicaId = createMusicaResponse.body.id;
-        
-            
-            const NovaMusica = {
-                name: 'Música atualizada2',
-                description: 'Descrição da música atualizada',
-                quality: 10,
-                artistaId: 1
-            };
-            const updateResponse = await agent.put(`/musica/${createdMusicaId}`).send(NovaMusica);
-            expect(updateResponse.statusCode).to.equal(404);
-            expect(updateResponse.text).to.equal(`"Artista não encontrado."`);
+        const createResponse = await agent.post('/artista').send(newArtista);
+        expect(createResponse.statusCode).to.equal(200);
+        const createdArtistaId = createResponse.body.id;
 
-            const deleteMusicaResponse = await agent.delete(`/musica/${createdMusicaId}`);
-            expect(deleteMusicaResponse.statusCode).to.equal(200);
+        const getRespon = await agent.get(`/artista/${createdArtistaId}`);
+        expect(getRespon.statusCode).to.equal(200);
+        expect(getRespon.body.artista).to.be.equal("Kay Black");
+
+        const newMusica = {
+            name: 'Melhor só',
+            description: 'ft. Baco',
+            quality: 10,
+            artistaId: createdArtistaId
+        };
     
-            const deleteArtistaResponse = await agent.delete(`/artista/${createdArtistaId}`);
-            expect(deleteArtistaResponse.statusCode).to.equal(200);
+        const createMusicaResponse = await agent.post(`/artista/${createdArtistaId}/musica`).send(newMusica);
+        expect(createMusicaResponse.statusCode).to.equal(200);
+        const createdMusicaId = createMusicaResponse.body.id;
+
+        const getRespons = await agent.get(`/artista/${createdArtistaId}/musicas`);
+            expect(getRespons.statusCode).to.equal(200);
+        
+            expect(getRespons.body[0].name).to.be.equal('Melhor só');
+            expect(getRespons.body[0].description).to.be.equal('ft. Baco');
+            expect(getRespons.body[0].quality).to.be.equal(10);
+            expect(getRespons.body[0]).to.have.property('artistaId', newMusica.artistaId);
+    
+        const NovaMusica = {
+            name: 'Música atualizada2',
+            description: 'Descrição da música atualizada',
+            quality: 10,
+            artistaId: 1
+        };
+        const updateResponse = await agent.put(`/musica/${createdMusicaId}`).send(NovaMusica);
+        expect(updateResponse.statusCode).to.equal(404);
+
+        expect(updateResponse.text).to.equal(`"Artista não encontrado."`);
+        const deleteMusicaResponse = await agent.delete(`/musica/${createdMusicaId}`);
+        expect(deleteMusicaResponse.statusCode).to.equal(200);
+
+        const deleteArtistaResponse = await agent.delete(`/artista/${createdArtistaId}`);
+        expect(deleteArtistaResponse.statusCode).to.equal(200);
     });
     
     it('Teste rota delete /musica/:id', async () => {
-            const newArtista = {
-              artista: 'Teste 3° Milestone',
-            };
-          
-            const createArtistaResponse = await agent.post('/artista').send(newArtista);
-            const createdArtistaId = createArtistaResponse.body.id;
-          
-            const newMusica = {
-              name: 'Nome da música',
-              description: 'Descrição da música',
-              quality: 10,
-              artistaId: createdArtistaId
-            };
-          
-            const createMusicaResponse = await agent.post(`/artista/${createdArtistaId}/musica`).send(newMusica);
-            const createdMusicaId = createMusicaResponse.body.id;
-          
-            const deleteResponse = await agent.delete(`/musica/${createdMusicaId}`);
-            expect(deleteResponse.status).to.equal(200);
-            expect(deleteResponse.body).to.deep.equal({ message: 'Música deletada com sucesso.' });
-          
-            const deleteArtistaResponse = await agent.delete(`/artista/${createdArtistaId}`);
-            expect(deleteArtistaResponse.status).to.equal(200);
+        const newArtista = {
+          artista: 'Teste 3° Milestone',
+        };
+        
+        const createArtistaResponse = await agent.post('/artista').send(newArtista);
+        const createdArtistaId = createArtistaResponse.body.id;
+        
+        const newMusica = {
+          name: 'Nome da música',
+          description: 'Descrição da música',
+          quality: 10,
+          artistaId: createdArtistaId
+        };
+        
+        const createMusicaResponse = await agent.post(`/artista/${createdArtistaId}/musica`).send(newMusica);
+        const createdMusicaId = createMusicaResponse.body.id;
+        
+        const deleteResponse = await agent.delete(`/musica/${createdMusicaId}`);
+        expect(deleteResponse.status).to.equal(200);
+        expect(deleteResponse.body).to.deep.equal({ message: 'Música deletada com sucesso.' });
+        
+        const deleteArtistaResponse = await agent.delete(`/artista/${createdArtistaId}`);
+        expect(deleteArtistaResponse.status).to.equal(200);
     });
     
     it('Teste rota delete /musica/:id - Música inexistente', async () => {
-            const deleteResponse = await agent.delete(`/musica/-1`);
-            expect(deleteResponse.status).to.equal(404);
-            expect(deleteResponse.body).to.deep.equal({ error: 'Música não encontrada.' });
+        const deleteResponse = await agent.delete(`/musica/-1`);
+        expect(deleteResponse.status).to.equal(404);
+        expect(deleteResponse.body).to.deep.equal({ error: 'Música não encontrada.' });
     });
     
     afterEach(async () => {
@@ -424,4 +429,4 @@ describe('User API Test', () => {
             await agent.delete(`/artista/${createdArtistaId}`);
         }
     });
-    });
+});
