@@ -5,10 +5,8 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     }
   });
-
   Artista.associate = function (models) {
     Artista.hasMany(models.Musica, { foreignKey: 'artistaId' });
   };
-
   return Artista;
 };

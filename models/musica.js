@@ -13,10 +13,8 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false
       }
     });
-  
     Musica.associate = function (models) {
       Musica.belongsTo(models.Artista, { foreignKey: 'artistaId' });
     };
-  
     return Musica;
   };
