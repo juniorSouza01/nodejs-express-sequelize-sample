@@ -38,7 +38,9 @@ app.post("/artista", async (req, res) => {
 //procura por todos os artistas
 app.get("/artista", async (req, res) => {
   try {
-    const artistas = await db.Artista.findAll({include: db.Musica});
+    const artistas = await db.Artista.findAll({
+      include: [db.Musica, db.Instrumento],
+    });
     res.json(artistas);
   } catch (error) {
     res.status(500).json({ error: "Falha ao buscar artistas." });
@@ -210,6 +212,106 @@ app.delete("/artista/:id", async (req, res) => {
     }
   } catch (error) {
     res.status(500).send({ error: "Falha ao deletar artista." });
+  }
+});
+
+//*************
+// CRUD Associação N : N =>
+//*************
+
+app.post("/instrumentos", async (req, res) => {
+ const novoInstrumento = {
+    name: req.body.name,
+    difficulty: req.body.difficulty,
+  };
+
+  try {
+    const instrumento = await db.Instrumento.create(novoInstrumento);
+    res.send(instrumento);
+  } catch (error) {
+    res.status(500).send({ error: "Falha ao criar instrumento." });
+  }
+});
+
+app.get("/instrumentos", async (req, res) => {
+    const instrumentoId = req.params.id;
+    try {
+      const instrumento = await db.Instrumento.findAll(instrumentoId, {include: db.Artista});
+      if (instrumento) {
+        res.status(200).json(instrumento);
+      } else {
+        res.status(404).json({ message: "Não há artistas com este id." });
+      }
+    } catch (error) {
+      res.status(500).json({ error: "Falha ao buscar artistas." });
+    }
+});
+
+app.put("/instrumentos/:id", async (req, res) => {
+  const instrumentoId = req.params.id;
+
+  const updatedInstrumento = {
+    name: req.body.name,
+    difficulty: req.body.difficulty,
+  };
+
+  try {
+    const instrumento = await db.Instrumento.findByPk(instrumentoId);
+    if (!instrumento) {
+      return res.status(404).send({ error: "Instrumento não encontrado." });
+    }
+
+    await instrumento.update(updatedInstrumento);
+
+    res.send({ message: "Instrumento atualizado com sucesso." });
+  } catch (error) {
+    res.status(500).send({ error: "Falha ao atualizar instrumento." });
+  }
+});
+
+app.delete("/instrumentos/:id", async (req, res) => {
+  const instrumentoId = req.params.id;
+
+  try {
+    const deletedInstrumento = await db.Instrumento.destroy({
+      where: {
+        id: instrumentoId
+      }
+    });
+
+    if (deletedInstrumento === 0) {
+      res.status(404).send({ error: "Instrumento não encontrado." });
+    } else {
+      res.send({ message: "Instrumento deletado com sucesso." });
+    }
+  } catch (error) {
+    res.status(500).send({ error: "Falha ao deletar instrumento." });
+  }
+});
+
+
+
+//Rota de associação
+app.post("/artista/:artistaId/instrumentos/:instrumentoId", async (req, res) => {
+  const artistaId = req.params.artistaId;
+  const instrumentoId = req.params.instrumentoId;
+
+  try {
+    const artista = await db.Artista.findByPk(artistaId);
+    if (!artista) {
+      return res.status(404).send({ error: "Artista não encontrado." });
+    }
+
+    const instrumento = await db.Instrumento.findByPk(instrumentoId);
+    if (!instrumento) {
+      return res.status(404).send({ error: "Instrumento não encontrado." });
+    }
+
+    await artista.addInstrumento(instrumento);
+
+    res.send({ message: "Instrumento associado ao artista com sucesso." });
+  } catch (error) {
+    res.status(500).send({ error: "Falha ao associar instrumento ao artista." });
   }
 });
 
