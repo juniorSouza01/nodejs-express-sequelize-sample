@@ -182,7 +182,6 @@ describe('User API Test', () => {
         expect(createArtistaResponse.statusCode).to.be.equal(200);
         const createdArtistaId = createArtistaResponse.body.id;
       
-      
         const associacaoResponse = await agent.post(`/artista/${createdArtistaId}/instrumentos/-1`);
         expect(associacaoResponse.statusCode).to.be.equal(404);
         expect(associacaoResponse.body).to.have.property('error', 'Instrumento não encontrado.');
