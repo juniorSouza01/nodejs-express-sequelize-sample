@@ -10,6 +10,7 @@ describe('User API Test', () => {
 
     let createdInstrumentId;
     let createdArtistaId;
+
     before(async () => {
    
     });
@@ -188,6 +189,39 @@ describe('User API Test', () => {
       
         const deleteArtistaResponse = await agent.delete(`/artista/${createdArtistaId}`);
         expect(deleteArtistaResponse.statusCode).to.equal(200);
+    });
+
+    it('Teste rota delete /artista/:artistaId/instrumentos/:instrumentoId - desassociação de artista e instrumento', async () => {
+        const newArtista = {
+            artista: 'Teste',
+        };
+
+        const createArtistaResponse = await agent.post('/artista').send(newArtista);
+        expect(createArtistaResponse.statusCode).to.be.equal(200);
+        const createdArtistaId = createArtistaResponse.body.id;
+
+        const newInstrumento = {
+            name: 'Violão',
+            difficulty: 10
+        };
+
+        const createInstrumentoResponse = await agent.post('/instrumentos').send(newInstrumento);
+        expect(createInstrumentoResponse.statusCode).to.be.equal(200);
+        const createdInstrumentoId = createInstrumentoResponse.body.id;
+
+        const associacaoResponse = await agent.post(`/artista/${createdArtistaId}/instrumentos/${createdInstrumentoId}`);
+        expect(associacaoResponse.statusCode).to.be.equal(200);
+        expect(associacaoResponse.body.message).to.be.equal("Instrumento associado ao artista com sucesso.");
+
+        const desassociacaoResponse = await agent.delete(`/artista/${createdArtistaId}/instrumentos/${createdInstrumentoId}`);
+        expect(desassociacaoResponse.statusCode).to.be.equal(200);
+        expect(desassociacaoResponse.body.message).to.be.equal("Instrumento desassociado do artista com sucesso.");
+
+        const deleteArtistaResponse = await agent.delete(`/artista/${createdArtistaId}`);
+        expect(deleteArtistaResponse.statusCode).to.equal(200);
+
+        const deleteInstrumentoResponse = await agent.delete(`/instrumentos/${createdInstrumentoId}`);
+        expect(deleteInstrumentoResponse.statusCode).to.equal(200);
     });
 
     after(async () => {

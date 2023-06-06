@@ -321,4 +321,77 @@ app.post("/artista/:artistaId/instrumentos/:instrumentoId", async (req, res) => 
   }
 });
 
+app.post("/artista/:artistaId/instrumentos", async (req, res) => {
+  const artistaId = req.params.artistaId;
+  const instrumentos = req.body.Instrumentos;
+
+  try {
+    const artista = await db.Artista.findByPk(artistaId);
+    if (!artista) {
+      return res.status(404).send({ error: "Artista não encontrado." });
+    }
+
+    for (const instrumentoId of instrumentos) {
+      const instrumento = await db.Instrumento.findByPk(instrumentoId);
+      if (!instrumento) {
+        return res.status(404).send({ error: "Instrumento não encontrado." });
+      }
+
+      await artista.addInstrumento(instrumento);
+    }
+
+    res.send({ message: "Instrumentos associados ao artista com sucesso." });
+  } catch (error) {
+    res.status(500).send({ error: "Falha ao associar instrumentos ao artista." });
+  }
+});
+
+app.post("/instrumentos/:instrumentoId/artista", async (req, res) => {
+  const instrumentoId = req.params.instrumentoId;
+  const artistas = req.body.Artistas;
+
+  try {
+    const instrumento = await db.Instrumento.findByPk(instrumentoId);
+    if (!instrumento) {
+      return res.status(404).send({ error: "Instrumento não encontrado." });
+    }
+
+    for (const artistaId of artistas) {
+      const artista = await db.Artista.findByPk(artistaId);
+      if (!artista) {
+        return res.status(404).send({ error: "Artista não encontrado." });
+      }
+
+      await artista.addInstrumento(instrumento);
+    }
+
+    res.send({ message: "Artistas associados ao instrumento com sucesso." });
+  } catch (error) {
+    res.status(500).send({ error: "Falha ao associar artistas ao instrumento." });
+  }
+});
+
+app.delete("/artista/:artistaId/instrumentos/:instrumentoId", async (req, res) => {
+  const artistaId = req.params.artistaId;
+  const instrumentoId = req.params.instrumentoId;
+
+  try {
+    const artista = await db.Artista.findByPk(artistaId);
+    if (!artista) {
+      return res.status(404).send({ error: "Artista não encontrado." });
+    }
+
+    const instrumento = await db.Instrumento.findByPk(instrumentoId);
+    if (!instrumento) {
+      return res.status(404).send({ error: "Instrumento não encontrado." });
+    }
+
+    await artista.removeInstrumento(instrumento);
+
+    res.send({ message: "Instrumento desassociado do artista com sucesso." });
+  } catch (error) {
+    res.status(500).send({ error: "Falha ao desassociar instrumento do artista." });
+  }
+});
+
 module.exports = app;
