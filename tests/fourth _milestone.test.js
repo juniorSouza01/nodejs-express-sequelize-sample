@@ -227,23 +227,6 @@ describe('User API Test', () => {
         }
     });
 
-    //it('Teste rota post /artista/:artistaId/instrumentos - erro 404 quando não há instrumentos', async () => {
-    //    const newArtista = {
-    //      artista: 'Teste',
-    //    };
-    //  
-    //    const createArtistaResponse = await agent.post('/artista').send(newArtista);
-    //    expect(createArtistaResponse.statusCode).to.be.equal(200);
-    //    const createdArtistaId = createArtistaResponse.body.id;
-    //  
-    //    const associacaoResponse = await agent.post(`/artista/${createdArtistaId}/-1`).send();
-    //    expect(associacaoResponse.statusCode).to.be.equal(404);
-    //    expect(associacaoResponse.body).to.have.property('error', 'Instrumento não encontrado.');
-    //  
-    //    const deleteArtistaResponse = await agent.delete(`/artista/${createdArtistaId}`);
-    //    expect(deleteArtistaResponse.statusCode).to.equal(200);
-    //});
-
     it('Teste rota post associação de artista e instrumento - 404 sem artista', async () => {
 
         const newInstrumentos = [
@@ -270,7 +253,23 @@ describe('User API Test', () => {
         }
     });
 
-
+    it('Teste rota post /artista/:artistaId/instrumentos - erro 404 quando não há instrumentos', async () => {
+        const newArtista = {
+          artista: 'Teste',
+        };
+      
+        const createArtistaResponse = await agent.post('/artista').send(newArtista);
+        expect(createArtistaResponse.statusCode).to.be.equal(200);
+        const createdArtistaId = createArtistaResponse.body.id;
+      
+        const instrumentoId = 123; 
+        const associacaoResponse = await agent.post(`/artista/${createdArtistaId}/instrumentos`).send({ Instrumentos: [instrumentoId] });
+        expect(associacaoResponse.statusCode).to.be.equal(404);
+        expect(associacaoResponse.body.error).to.be.equal("Instrumento não encontrado.");
+      
+        const deleteArtistaResponse = await agent.delete(`/artista/${createdArtistaId}`);
+        expect(deleteArtistaResponse.statusCode).to.equal(200);
+    });
 
     it('Teste rota post /instrumentos/:instrumentoId/artista', async () => {
         const newArtista = {
@@ -300,6 +299,44 @@ describe('User API Test', () => {
         const deleteInstrumentoResponse = await agent.delete(`/instrumentos/${createdInstrumentoId}`);
         expect(deleteInstrumentoResponse.statusCode).to.equal(200);
     });
+
+    it('Teste rota post /instrumentos/:instrumentoId/artista - error 404 Instrumento não encontrado', async () => {
+        const newArtista = {
+          artista: 'Teste',
+        };
+      
+        const createArtistaResponse = await agent.post('/artista').send(newArtista);
+        expect(createArtistaResponse.statusCode).to.be.equal(200);
+        const createdArtistaId = createArtistaResponse.body.id;
+      
+        const instrumentoId = 123;
+        const associacaoResponse = await agent.post(`/instrumentos/${instrumentoId}/artista`).send({ Artistas: [createdArtistaId] });
+        expect(associacaoResponse.statusCode).to.be.equal(404);
+        expect(associacaoResponse.body.error).to.be.equal("Instrumento não encontrado.");
+      
+        const deleteArtistaResponse = await agent.delete(`/artista/${createdArtistaId}`);
+        expect(deleteArtistaResponse.statusCode).to.equal(200);
+    });
+
+    it('Teste rota post /instrumentos/:instrumentoId/artista', async () => {
+
+        const newInstrumento = {
+          name: 'Piano',
+          difficulty: 10,
+        };
+      
+        const createInstrumentoResponse = await agent.post('/instrumentos').send(newInstrumento);
+        expect(createInstrumentoResponse.statusCode).to.be.equal(200);
+        const createdInstrumentoId = createInstrumentoResponse.body.id;
+      
+        const invalidArtistaId = 'invalidId';
+        const associacaoResponseError = await agent.post(`/instrumentos/${createdInstrumentoId}/artista`).send({ Artistas: [createdArtistaId, invalidArtistaId] });
+        expect(associacaoResponseError.statusCode).to.be.equal(404);
+        expect(associacaoResponseError.body.error).to.be.equal("Artista não encontrado.");
+
+        const deleteInstrumentoResponse = await agent.delete(`/instrumentos/${createdInstrumentoId}`);
+        expect(deleteInstrumentoResponse.statusCode).to.equal(200);
+      });
 
     it('Teste rota delete /artista/:artistaId/instrumentos/:instrumentoId - desassociação de artista e instrumento', async () => {
         const newArtista = {
@@ -334,6 +371,46 @@ describe('User API Test', () => {
         expect(deleteInstrumentoResponse.statusCode).to.equal(200);
     });
 
+    it('Teste rota delete /artista/:artistaId/instrumentos/:instrumentoId - desassociação de artista e instrumento', async () => {
+        const newInstrumento = {
+          name: 'Violão',
+          difficulty: 10
+        };
+      
+        const createInstrumentoResponse = await agent.post('/instrumentos').send(newInstrumento);
+        expect(createInstrumentoResponse.statusCode).to.be.equal(200);
+        const createdInstrumentoId = createInstrumentoResponse.body.id;
+      
+        const associacaoResponse = await agent.post(`/artista/${createdArtistaId}/instrumentos/${createdInstrumentoId}`);
+        expect(associacaoResponse.statusCode).to.be.equal(404);
+        expect(associacaoResponse.body).to.have.property('error', 'Artista não encontrado.');
+      
+        const deleteInstrumentoResponse = await agent.delete(`/artista/${createdArtistaId}/instrumentos/${createdInstrumentoId}`);
+        expect(deleteInstrumentoResponse.statusCode).to.equal(404);
+        expect(associacaoResponse.body).to.have.property('error', 'Artista não encontrado.');
+    });
+
+    it('Teste rota delete /artista/:artistaId/instrumentos/:instrumentoId - desassociação de artista e instrumento', async () => {
+        const newArtista = {
+            artista: 'Teste',
+        };
+    
+        const createArtistaResponse = await agent.post('/artista').send(newArtista);
+        expect(createArtistaResponse.statusCode).to.be.equal(200);
+        const createdArtistaId = createArtistaResponse.body.id;
+    
+        const associacaoResponse = await agent.post(`/artista/${createdArtistaId}/instrumentos/-1`);
+        expect(associacaoResponse.statusCode).to.be.equal(404);
+        expect(associacaoResponse.body).to.have.property('error', 'Instrumento não encontrado.');
+    
+        const desassociacaoResponse = await agent.delete(`/artista/${createdArtistaId}/instrumentos/-1`);
+        expect(desassociacaoResponse.statusCode).to.be.equal(404);
+        expect(desassociacaoResponse.body).to.have.property('error', 'Instrumento não encontrado.');
+    
+        const deleteArtistaResponse = await agent.delete(`/artista/${createdArtistaId}`);
+        expect(deleteArtistaResponse.statusCode).to.equal(200);
+    });
+    
     after(async () => {
         if (createdInstrumentId) {
             await agent.delete(`/instrumentos/${createdInstrumentId}`);
