@@ -388,6 +388,9 @@ describe('User API Test', () => {
         const deleteInstrumentoResponse = await agent.delete(`/artista/${createdArtistaId}/instrumentos/${createdInstrumentoId}`);
         expect(deleteInstrumentoResponse.statusCode).to.equal(404);
         expect(associacaoResponse.body).to.have.property('error', 'Artista não encontrado.');
+
+        const deleteInstrumentoRespons = await agent.delete(`/instrumentos/${createdInstrumentoId}`);
+        expect(deleteInstrumentoRespons.statusCode).to.equal(200);
     });
 
     it('Teste rota delete /artista/:artistaId/instrumentos/:instrumentoId - desassociação de artista e instrumento', async () => {
